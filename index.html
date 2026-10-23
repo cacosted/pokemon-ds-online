@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Guía paso a paso para intercambiar y combatir en Pokémon Platino y SoulSilver por internet desde Mac, iPhone y Android.">
+<title>Pokémon DS en línea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one readable column, a DS-style "settings screen" card for the DNS, platform sections with a jump bar */
+:root {
+  --bg: #f3f5f7;
+  --surface: #ffffff;
+  --fg: #17212b;
+  --muted: #55636f;
+  --line: #d7dee5;
+  --accent: #0b6f86;
+  --accent-soft: #e0f1f5;
+  --warn: #9a5b00;
+  --warn-soft: #fff3df;
+  --screen: #1d2b33;
+  --screen-fg: #d9f3ec;
+  --screen-dim: #8fb3aa;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11171c; --surface: #19222a; --fg: #e6edf2; --muted: #9aa9b5; --line: #2c3a45;
+    --accent: #5cc3d8; --accent-soft: #15323a; --warn: #f2b45c; --warn-soft: #33270f;
+    --screen: #0b1216; --screen-fg: #c9f0e4; --screen-dim: #6f948b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11171c; --surface: #19222a; --fg: #e6edf2; --muted: #9aa9b5; --line: #2c3a45;
+  --accent: #5cc3d8; --accent-soft: #15323a; --warn: #f2b45c; --warn-soft: #33270f;
+  --screen: #0b1216; --screen-fg: #c9f0e4; --screen-dim: #6f948b;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+}
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 48px;
+}
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 6vw, 2.9rem); font-weight: 800; letter-spacing: -0.01em; }
+h2 { font-size: 1.6rem; font-weight: 800; }
+h3 { font-size: 1.15rem; font-weight: 600; }
+p { margin: 0; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
+.eyebrow { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 700; }
+section { display: grid; gap: 18px; }
+.lede { font-size: 1.12rem; color: var(--muted); max-width: 62ch; }
+
+/* Header */
+header { display: grid; gap: 14px; }
+.games { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: 0.85rem; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+
+/* DS settings screen */
+.screen {
+  background: var(--screen);
+  color: var(--screen-fg);
+  border-radius: 14px;
+  padding: 22px;
+  display: grid;
+  gap: 18px;
+  font-family: var(--font-mono);
+}
+.screen-title { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--screen-dim); }
+.field { display: grid; gap: 8px; }
+.field-label { font-size: 0.85rem; color: var(--screen-dim); }
+.octets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.octet {
+  font-size: clamp(1.25rem, 5vw, 1.7rem);
+  font-weight: 700;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--screen-fg) 30%, transparent);
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.dot { font-size: 1.5rem; color: var(--screen-dim); }
+.screen-note { font-family: var(--font-body); font-size: 0.95rem; color: var(--screen-dim); }
+.screen-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.copy {
+  font: 600 0.95rem var(--font-body);
+  background: var(--screen-fg);
+  color: var(--screen);
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+.copy:hover { filter: brightness(1.08); }
+
+/* Rules */
+.rules { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.rules li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; }
+.rules .mark { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-weight: 700; font-size: 0.9rem; margin-top: 1px; }
+.rules strong { color: var(--fg); }
+
+/* Jump bar */
+.jump { display: flex; flex-wrap: wrap; gap: 10px; }
+.jump a {
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--fg);
+  font-weight: 700;
+}
+.jump a:hover { border-color: var(--accent); color: var(--accent); }
+.jump small { display: block; font-weight: 400; color: var(--muted); font-size: 0.8rem; }
+
+/* Platform panels */
+.platform {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+  scroll-margin-top: 16px;
+}
+.platform-head { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; }
+.app { color: var(--muted); font-size: 0.95rem; }
+ol.steps { margin: 0; padding-left: 1.4em; display: grid; gap: 12px; }
+ol.steps li { padding-left: 4px; min-width: 0; }
+ol.steps li::marker { font-family: var(--font-display); font-weight: 800; color: var(--accent); }
+ul.plain { margin: 6px 0 0; padding-left: 1.2em; display: grid; gap: 4px; }
+.path { font-weight: 700; }
+
+.note {
+  border-radius: 10px;
+  padding: 14px 16px;
+  background: var(--accent-soft);
+  font-size: 0.97rem;
+}
+.note.warn { background: var(--warn-soft); }
+.note.warn strong { color: var(--warn); }
+
+/* Trouble list */
+.trouble { display: grid; gap: 10px; }
+.trouble div {
+  display: grid;
+  grid-template-columns: minmax(110px, 180px) 1fr;
+  gap: 4px 18px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.trouble dt { font-weight: 700; }
+.trouble dd { margin: 0; color: var(--fg); min-width: 0; }
+.trouble .code { font-family: var(--font-mono); font-weight: 700; }
+@media (max-width: 560px) {
+  .trouble div { grid-template-columns: 1fr; }
+  .platform { padding: 18px; }
+}
+
+.split { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.split > div { display: grid; gap: 8px; align-content: start; min-width: 0; }
+
+footer { display: grid; gap: 10px; font-size: 0.92rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 24px; }
+footer ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+</style>
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+img { max-width: 100%; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <span class="eyebrow">Guía para jugar a distancia</span>
+    <h1>Pokémon DS en línea</h1>
+    <p class="lede">Para intercambiar y combatir por internet desde países distintos, cada quien con su Mac, iPhone o Android. Se configura una sola vez.</p>
+    <div class="games">
+      <span class="chip">Platino</span>
+      <span class="chip">Plata SoulSilver</span>
+      <span class="chip">Oro HeartGold</span>
+      <span class="chip">Diamante y Perla</span>
+    </div>
+  </header>
+
+  <section aria-labelledby="datos">
+    <h2 id="datos">El único dato que necesitan</h2>
+    <p>Nintendo apagó sus servidores en 2014. Hoy hay servidores hechos por fans (Wiimmfi y Pokémon Classic Network) que los reemplazan. Para usarlos sólo hay que cambiar el <strong>DNS</strong> en la configuración Wi-Fi del juego.</p>
+    <div class="screen" role="group" aria-label="Datos de la conexión">
+      <span class="screen-title">Configuración de Nintendo WFC · Conexión 1</span>
+      <div class="field">
+        <span class="field-label">DNS primario y DNS secundario (los dos iguales)</span>
+        <div class="octets" aria-label="178.062.043.212">
+          <span class="octet">178</span><span class="dot">.</span>
+          <span class="octet">062</span><span class="dot">.</span>
+          <span class="octet">043</span><span class="dot">.</span>
+          <span class="octet">212</span>
+        </div>
+      </div>
+      <div class="field">
+        <span class="field-label">Obtener DNS automáticamente</span>
+        <span class="octet" style="justify-self:start">No</span>
+      </div>
+      <div class="screen-row">
+        <p class="screen-note">El DS pide 3 dígitos por casilla. Por eso <span class="mono">62</span> se escribe <span class="mono">062</span>.</p>
+        <button class="copy" id="copy-dns" type="button">Copiar 178.62.43.212</button>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="reglas">
+    <h2 id="reglas">Antes de empezar</h2>
+    <ul class="rules">
+      <li><span class="mark">1</span><p><strong>Todos en el mismo servidor.</strong> Con este DNS (o con "Wiimmfi" en Delta) todos llegan al mismo lugar. Si alguien usa otro servidor, no se van a ver.</p></li>
+      <li><span class="mark">2</span><p><strong>Platino y SoulSilver sí se entienden.</strong> Son de la misma generación, así que pueden intercambiar y combatir aunque cada quien juegue uno distinto. El idioma del juego tampoco importa.</p></li>
+      <li><span class="mark">3</span><p><strong>Respalden su partida</strong> antes de conectarse. Cada plataforma explica cómo.</p></li>
+      <li><span class="mark">4</span><p><strong>Nada de VPN</strong> mientras juegan online. Wiimmfi bloquea temporalmente las conexiones con VPN.</p></li>
+      <li><span class="mark">5</span><p><strong>Para probar en la misma casa,</strong> cada dispositivo debe estar en una red distinta (uno en Wi-Fi y otro con datos móviles).</p></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="plataformas">
+    <h2 id="plataformas">Configura tu dispositivo</h2>
+    <nav class="jump" aria-label="Plataformas">
+      <a href="#mac">Mac<small>melonDS</small></a>
+      <a href="#iphone">iPhone<small>Delta</small></a>
+      <a href="#android">Android<small>melonDS</small></a>
+    </nav>
+
+    <article class="platform" id="mac">
+      <div class="platform-head"><h3>Mac</h3><span class="app">melonDS</span></div>
+      <ol class="steps">
+        <li><strong>Respaldo:</strong> junto al juego (<code>.nds</code>) hay un archivo con el mismo nombre que termina en <code>.sav</code>. Cópienlo a otra carpeta.</li>
+        <li>Abran melonDS y carguen el juego. melonDS ya trae una red Wi-Fi llamada <strong>melonAP</strong> que usa el internet de la Mac. No hace falta firmware ni BIOS.
+          <ul class="plain"><li>Si alguna vez cambiaron algo, en <span class="path">Config → Wifi settings</span> dejen el modo en <strong>Indirect</strong>, que es el modo por defecto.</li></ul>
+        </li>
+        <li>En el menú principal del juego (el de "Continuar", después de la pantalla de título), entren a <span class="path">Configuración de Nintendo WFC</span>.</li>
+        <li>Entren a <span class="path">Ajustes de conexión → Conexión 1</span>. Debe decir <code>melonAP</code>. Si está vacía, creen una nueva, busquen un punto de acceso y elijan <code>melonAP</code>.</li>
+        <li>Pongan <strong>Obtener DNS automáticamente: No</strong> y escriban <code>178.062.043.212</code> en el DNS primario y en el secundario.</li>
+        <li>Guarden y elijan <span class="path">Probar conexión</span>. Debe decir que la conexión fue exitosa.</li>
+      </ol>
+    </article>
+
+    <article class="platform" id="iphone">
+      <div class="platform-head"><h3>iPhone</h3><span class="app">Delta (App Store)</span></div>
+      <p>Delta ya trae los servidores configurados, así que no hay que escribir el DNS.</p>
+      <ol class="steps">
+        <li><strong>Respaldo:</strong> en la biblioteca de Delta, mantengan presionado el juego y elijan <span class="path">Export Save File</span> (exportar partida). Guárdenlo en Archivos.</li>
+        <li>Abran el juego y entren a algo online, como el Club Wi-Fi o la GTS.</li>
+        <li>En el aviso que aparece, toquen <span class="path">Choose Server</span>.</li>
+        <li>Elijan <strong>Wiimmfi</strong>, toquen <span class="path">Done</span> y luego <span class="path">Restart</span> para reiniciar el juego.</li>
+        <li>Sólo si cargaron archivos BIOS en Delta (<code>bios7.bin</code>, <code>bios9.bin</code>, <code>firmware.bin</code>): en el juego vayan a <span class="path">Configuración de Nintendo WFC → Opciones → Borrar configuración de Nintendo WFC</span>. Sin BIOS, no hace falta.</li>
+      </ol>
+      <p class="note">El servidor "Wiimmfi" de Delta llega a los mismos servidores que el DNS <code>178.62.43.212</code>, así que los de iPhone se ven con los de Mac y Android. Para cambiar de servidor más adelante: <span class="path">Ajustes de Delta → Core Settings (Nintendo DS) → WFC Server</span>.</p>
+    </article>
+
+    <article class="platform" id="android">
+      <div class="platform-head"><h3>Android</h3><span class="app">melonDS de Rafael Caetano, versión 1.9.0 o más nueva</span></div>
+      <p>Esta versión de melonDS tiene Wi-Fi de verdad. No usen DraStic: no tiene online.</p>
+      <ol class="steps">
+        <li><strong>Respaldo:</strong> copien el archivo <code>.sav</code> del juego (está en la carpeta de partidas que eligieron en la app) a otra carpeta.</li>
+        <li>Abran el juego y sigan los mismos pasos que en Mac, desde <span class="path">Configuración de Nintendo WFC</span>: Conexión 1 (<code>melonAP</code>), DNS <code>178.062.043.212</code> en primario y secundario, y <span class="path">Probar conexión</span>.</li>
+      </ol>
+      <p class="note warn"><strong>Aviso:</strong> no encontré reportes recientes que confirmen los intercambios entre amigos en melonDS para Android. Si falla, revisen "Si algo falla" más abajo.</p>
+    </article>
+  </section>
+
+  <section aria-labelledby="jugar">
+    <h2 id="jugar">Cómo intercambiar y combatir</h2>
+    <ol class="steps">
+      <li><strong>Consigan el Bloc Amigos.</strong> Se lo da la chica del sótano del Centro Pokémon (bajen por las escaleras). En SoulSilver primero hay que ganar la <strong>Medalla Céfiro</strong> (gimnasio de Pegaso).</li>
+      <li><strong>Saquen su código de amigo.</strong> Aparece después de la primera conexión a internet desde el juego: entren al Club Wi-Fi una vez y salgan. Luego vean <span class="path">Bloc Amigos → Tu código de amigo</span> (12 números) y compártanlo por WhatsApp.</li>
+      <li><strong>Regístrense mutuamente.</strong> Cada quien agrega el código del otro en su Bloc Amigos. Tiene que ser de ida y vuelta: si sólo uno registra al otro, no se ven.</li>
+      <li><strong>Entren al Club Wi-Fi al mismo tiempo.</strong> Está en el sótano del Centro Pokémon. Guarden cuando lo pida y esperen a que conecte.</li>
+      <li><strong>Hablen con el otro entrenador</strong> que aparece en la sala y elijan <strong>Intercambio</strong> o <strong>Combate</strong>.</li>
+    </ol>
+    <div class="split">
+      <div>
+        <h3>GTS: intercambios con todo el mundo</h3>
+        <p>En Platino está en <strong>Ciudad Jubileo</strong>. En SoulSilver, en <strong>Ciudad Trigal</strong>. Ahí se deja un Pokémon pidiendo otro a cambio.</p>
+      </div>
+      <div>
+        <h3>Truco entre hermanos</h3>
+        <p>Uno deja un Pokémon en la GTS pidiendo algo muy específico (especie, sexo y nivel poco comunes) y el otro lo busca y hace el cambio. Así funciona aunque no coincidan en horario.</p>
+      </div>
+    </div>
+    <p class="note">Si cambian de servidor, de emulador o borran la configuración de Nintendo WFC, el <strong>código de amigo cambia</strong> y hay que volver a compartirlo.</p>
+  </section>
+
+  <section aria-labelledby="problemas">
+    <h2 id="problemas">Si algo falla</h2>
+    <dl class="trouble">
+      <div><dt><span class="code">52100</span></dt><dd>El DNS está mal escrito. Revisen que diga <code>178.062.043.212</code> en primario y secundario.</dd></div>
+      <div><dt><span class="code">20110 · 52200</span></dt><dd>Problema de la red o del proveedor de internet. Prueben con otra red (datos móviles u otro Wi-Fi). Si sigue fallando, pasen todos juntos al plan B.</dd></div>
+      <div><dt><span class="code">23917</span></dt><dd>Están bloqueados. En el juego: <span class="path">Configuración de Nintendo WFC → Opciones → Borrar configuración</span>. Después vuelvan a poner el DNS. El código de amigo va a cambiar.</dd></div>
+      <div><dt><span class="code">60000</span></dt><dd>Cambiaron de servidor. Reinicien el juego.</dd></div>
+      <div><dt><span class="code">61020</span></dt><dd>El servidor está en mantenimiento (Pokémon Classic Network lo hace los jueves a las 03:00 UTC). Intenten más tarde.</dd></div>
+      <div><dt><span class="code">80430</span></dt><dd>Los dos están en la misma red Wi-Fi. Uno debe cambiarse a datos móviles.</dd></div>
+      <div><dt><span class="code">91010</span></dt><dd>En Delta: reintenten. Si sigue, quiten los archivos BIOS o cambien de servidor.</dd></div>
+      <div><dt>No se ven en el Club Wi-Fi</dt><dd>Revisen que los dos se hayan registrado mutuamente, que usen el mismo servidor y que su código de amigo no haya cambiado. Si todo está bien, prueben con datos móviles: puede ser el módem.</dd></div>
+      <div><dt>Se congela al intercambiar o combatir</dt><dd>Salgan del Club, reinicien el juego y vuelvan a entrar. Si pasa siempre, prueben el plan B.</dd></div>
+      <div><dt>Otro error</dt><dd>Búsquenlo en <a href="https://wiimmfi.de/error" target="_blank" rel="noopener">wiimmfi.de/error</a>.</dd></div>
+    </dl>
+
+    <div class="split">
+      <div>
+        <h3>Plan B: todos en AltWFC</h3>
+        <p>Si Wiimmfi les da problemas, cámbiense <strong>todos juntos</strong>:</p>
+        <ul class="plain">
+          <li>Mac y Android: DNS <code>172.104.088.237</code> en primario y secundario.</li>
+          <li>iPhone: <span class="path">Core Settings (Nintendo DS) → WFC Server → AltWFC</span>.</li>
+        </ul>
+        <p>Después compartan otra vez sus códigos de amigo, porque cambian. La GTS de Pokémon Classic Network no está garantizada en AltWFC.</p>
+      </div>
+      <div>
+        <h3>Juegos randomizados o hackeados</h3>
+        <p>Con un juego randomizado se puede intercambiar, aunque un Pokémon puede verse distinto en el juego del otro. Los hacks que agregan Pokémon nuevos (más de 493) pueden <strong>dañar la partida</strong> del otro. Para jugar online, lo más seguro es el juego original. Si no, respalden siempre antes.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="eyebrow">Fuentes</span>
+    <ul>
+      <li><a href="https://pkmnclassic.net/" target="_blank" rel="noopener">Pokémon Classic Network</a>: DNS y horario de mantenimiento</li>
+      <li><a href="https://wiki.ds-homebrew.com/ds-index/wifi" target="_blank" rel="noopener">DS-Homebrew Wiki</a>: DNS de Wiimmfi y AltWFC</li>
+      <li><a href="https://faq.deltaemulator.com/using-delta/online" target="_blank" rel="noopener">Ayuda de Delta</a>: elegir servidor y códigos de error</li>
+      <li><a href="https://github.com/rafaelvcaetano/melonDS-android/releases" target="_blank" rel="noopener">melonDS para Android</a>: Wi-Fi desde la beta 1.9.0</li>
+      <li><a href="https://melonds.kuribo64.net/faq.php" target="_blank" rel="noopener">Preguntas frecuentes de melonDS</a>: melonAP y modo Indirect</li>
+      <li><a href="https://bulbapedia.bulbagarden.net/wiki/Pal_Pad" target="_blank" rel="noopener">Bulbapedia</a>: Bloc Amigos y registro mutuo</li>
+    </ul>
+  </footer>
+</div>
+
+<script>
+document.getElementById("copy-dns").addEventListener("click", async (event) => {
+  const button = event.currentTarget;
+  try {
+    await navigator.clipboard.writeText("178.62.43.212");
+    button.textContent = "Copiado";
+  } catch {
+    const range = document.createRange();
+    range.selectNodeContents(document.querySelector(".octets"));
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    button.textContent = "Selecciónalo y cópialo";
+  }
+  setTimeout(() => { button.textContent = "Copiar 178.62.43.212"; }, 2000);
+});
+</script>
+</body>
+</html>
